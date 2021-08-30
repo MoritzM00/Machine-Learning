@@ -15,8 +15,8 @@ class LinearRegression:
         beta: includes bias, beta[0], and weights, beta[:1]
         residuals: error of the predicted values for y
         y_train: training data for the target vector y
-        T is the number of data points
-        K is the number of regressors in the model
+        T: number of data points
+        K: number of regressors
         """
         self.beta = None
         self.y_train = None
@@ -24,13 +24,19 @@ class LinearRegression:
         self.T = None
         self.K = None
 
+
     def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> None:
-        """
+        r"""
         Fits the Model to X and y using the ordinary least squares estimator.
+        The OLS estimator has a closed form solution:
+
+        .. math::
+          \beta = (X^T X)^{-1} \cdot X^T y
 
         :param x_train: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model
-        :param y_train: the target vector (T dimensional), must be 1D
+        :param y_train: the target vector (T dimensional)
         :return: None
+        :raises ValueError: if y_train is not 1D
         """
         x_train = np.array(x_train)
         y_train = np.array(y_train)
@@ -59,28 +65,31 @@ class LinearRegression:
         y_hat = np.matmul(x_train, self.beta)
         self.residuals = self.y_train - y_hat
 
-    def predict(self, x: np.array) -> float:
+    def predict(self, x: npt.ArrayLike) -> float:
         """
         Predicts y using the x data vector.
 
         :param x: a K-dimensional array
         :return: the predicted values for y
+
+        :raises ValueError: if x is not 2D
         """
-        if self.K == 1:
-            return self.beta[0] + self.beta[1] * x
-        else:
-            return np.dot(x, self.beta[1:]) + self.beta[0]
+        x = np.array(x)
+        if x.ndim != 2:
+            raise ValueError("x must be 2D")
+        return np.dot(x, self.beta[1:]) + self.beta[0]
 
     def summary(self, verbose=False) -> (float, float, float, float):
         """
         Calculates the following measures of goodness:
-         - r-squared and adjusted r-squared
+         - r-squared
+         - adjusted r-squared
          - residual variance (RSS)
          - root mean squared error (RMSE)
 
         The total sum of squares (TSS) is equal to the explained variance (ESS)
-        plus the residual variance (RSS)
-        -> TSS = ESS + RSS
+        plus the residual variance (RSS):
+        :math:`TSS = ESS + RSS`
 
         As the r-squared measure increases artificially with the number of regressors, it is important
         to compare it with the adjusted r-squared, which eliminates this problem by scaling it with a factor
