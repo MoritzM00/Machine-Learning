@@ -1,76 +1,75 @@
 import numpy as np
 import numpy.typing as npt
-from scipy import linalg
 from math import sqrt
 
 
 class LinearRegression:
     """
     Ordinary least squares (OLS) linear regression model
-
-    b: Regressor vector
-    X: Design matrix
-    y: Target vector
-    residuals: Residual vector
-    T: Number of data points
-    K: Number of regressors
     """
 
     def __init__(self):
         """
         Initializes the model.
+
+        beta: includes bias, beta[0], and weights, beta[:1]
+        residuals: error of the predicted values for y
+        y_train: training data for the target vector y
+        T is the number of data points
+        K is the number of regressors in the model
         """
-        self.b = None
-        self.X = None
-        self.y = None
+        self.beta = None
+        self.y_train = None
         self.residuals = None
         self.T = None
         self.K = None
 
-    def fit(self, X: npt.ArrayLike, y: npt.ArrayLike) -> None:
+    def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> None:
         """
         Fits the Model to X and y using the ordinary least squares estimator.
 
-        :param X: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model)
-        :param y: the target vector (T dimensional)
+        :param x_train: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model
+        :param y_train: the target vector (T dimensional), must be 1D
         :return: None
         """
-        self.X = np.array(X).T
-        self.y = np.array(y)
+        x_train = np.array(x_train)
+        y_train = np.array(y_train)
+        self.y_train = y_train
 
-        if self.X.ndim == 1:
+        if x_train.ndim == 1:
             # X must be at least two-dimensional to be used in numpy matmul function
-            self.X = np.atleast_2d(self.X).T
+            x_train = np.atleast_2d(x_train).T
 
-        self.T, self.K = self.X.shape
+        if y_train.ndim != 1:
+            raise ValueError("y_train must be 1D")
+
+        self.T, self.K = x_train.shape
         # because a column will be added, we need to increment K
         self.K += 1
 
-        # add column with ones for the intercept variable
+        # add column with ones for the intercept
         X_ = np.ones((self.T, self.K))
-        X_[:, 1:] = self.X
-        self.X = X_
+        X_[:, 1:] = x_train
+        x_train = X_
 
-        # calculate (X.T * X)^(-1) * X.T * y
-        first = linalg.inv(np.matmul(X_.T, X_))
-        second = np.matmul(X_.T, y)
-        self.b = np.matmul(first, second)
+        # closed form solution: (X.T * X)^(-1) * X.T * y
+        self.beta = np.linalg.inv(x_train.T.dot(x_train)).dot(x_train.T.dot(y_train))
 
         # calculate residuals
-        y_hat = np.matmul(X_, self.b)
-        self.residuals = self.y - y_hat
+        y_hat = np.matmul(x_train, self.beta)
+        self.residuals = self.y_train - y_hat
 
     def predict(self, x: np.array) -> float:
         """
-        Predicts y from x.
+        Predicts y using the x data vector.
 
         :param x: a K-dimensional array
         :return: the predicted values for y
         """
         if self.K == 1:
-            return self.b[0] + self.b[1] * x
+            return self.beta[0] + self.beta[1] * x
         else:
-            return np.dot(x, self.b[1:]) + self.b[0]
+            return np.dot(x, self.beta[1:]) + self.beta[0]
 
     def summary(self, verbose=False) -> (float, float, float, float):
         """
@@ -93,14 +92,13 @@ class LinearRegression:
         :param verbose: if True, then the measures get printed as well
         :return: a 4-tuple of floats
         """
-        # Standardabweichung der Residuen
         var_residuals = np.dot(self.residuals, self.residuals) / (self.T - self.K)
 
         # Root mean squared error
         rmse = sqrt(1 / self.T * sum(self.residuals ** 2))
 
-        y_mean = self.y.mean()
-        r_squared = 1 - (sum(self.residuals ** 2)) / sum((self.y - y_mean) ** 2)
+        y_mean = self.y_train.mean()
+        r_squared = 1 - (sum(self.residuals ** 2)) / sum((self.y_train - y_mean) ** 2)
         adj_r_squared = 1 - (self.T - 1) / (self.T - self.K) * (1 - r_squared)
 
         if verbose:
