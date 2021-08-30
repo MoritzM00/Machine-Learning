@@ -4,8 +4,22 @@ from math import sqrt
 
 
 class LinearRegression:
-    """
-    Ordinary least squares (OLS) linear regression model
+    r"""
+    Ordinary least squares (OLS) linear regression model.
+
+    We denote the multiple linear model as the following:
+
+    .. math::
+       y_t = \beta_1 + \beta_2 x_{t2} + \beta_3 x_{t3} + \cdots + \beta_K x_{tK} + e_t
+    with :math:`t = 1, \ldots, T`
+    and :math:`e_t` being the error term. We assume that :math:`e_t \sim N(0, \sigma^2)`
+
+    In matrix notation, we can simply write
+
+    .. math::
+       y = \beta X + e
+    where :math:`X \in \mathbb{R}^{TxK}` the design matrix
+    and :math:`e, y \in \mathbb{R}^T`
     """
 
     def __init__(self):
@@ -23,7 +37,6 @@ class LinearRegression:
         self.residuals = None
         self.T = None
         self.K = None
-
 
     def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> None:
         r"""
