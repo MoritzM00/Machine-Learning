@@ -1,9 +1,12 @@
+from __future__ import annotations
 import numpy as np
 import numpy.typing as npt
 from math import sqrt
 
+from ..base import LinearModel, RegressorMixin
 
-class LinearRegression:
+
+class LinearRegression(LinearModel, RegressorMixin):
     r"""
     Ordinary least squares (OLS) linear regression model.
 
@@ -38,7 +41,7 @@ class LinearRegression:
         self.T = None
         self.K = None
 
-    def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> None:
+    def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> LinearRegression:
         """
         Fits the Model to X and y using the ordinary least squares estimator.
         The OLS estimator has a closed form solution:
@@ -48,7 +51,7 @@ class LinearRegression:
 
         :param x_train: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model
         :param y_train: the target vector (T dimensional)
-        :return: None
+        :return: self
         :raises ValueError: if y_train is not 1D
         """
         x_train = np.array(x_train)
@@ -76,6 +79,7 @@ class LinearRegression:
         # calculate residuals
         y_hat = np.matmul(x_train, self.beta)
         self.residuals = self.y_train - y_hat
+        return self
 
     def predict(self, x: npt.ArrayLike) -> float:
         """
@@ -90,6 +94,9 @@ class LinearRegression:
         if x.ndim != 2:
             raise ValueError("x must be 2D")
         return np.dot(x, self.beta[1:]) + self.beta[0]
+
+    def score(self) -> float:
+        raise NotImplementedError
 
     def summary(self, verbose=False) -> (float, float, float, float):
         """
