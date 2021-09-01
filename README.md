@@ -1,4 +1,4 @@
-# Intro to Statistics
+# Intro to Machine Learning
 This project implements several well known statistical methods used to perform inductive analysis on sample data
 
 *work in progress*
