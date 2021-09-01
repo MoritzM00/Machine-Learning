@@ -67,9 +67,6 @@ class LinearRegression:
         self.K += 1
 
         # add column with ones for the intercept
-        #X_ = np.ones((self.T, self.K))
-        #X_[:, 1:] = x_train
-        #x_train = X_
         dummy_column = np.ones(shape=(self.T, 1))
         x_train = np.concatenate((dummy_column, x_train), axis=1)
 
