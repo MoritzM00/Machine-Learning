@@ -29,7 +29,7 @@ class LinearRegression:
         beta: includes bias, beta[0], and weights, beta[:1]
         residuals: error of the predicted values for y
         y_train: training data for the target vector y
-        T: number of data points
+        T: number of samples
         K: number of regressors
         """
         self.beta = None
@@ -39,12 +39,12 @@ class LinearRegression:
         self.K = None
 
     def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> None:
-        r"""
+        """
         Fits the Model to X and y using the ordinary least squares estimator.
         The OLS estimator has a closed form solution:
 
         .. math::
-          \beta = (X^T X)^{-1} \cdot X^T y
+          \\beta = (X^T X)^{-1} \cdot X^T y
 
         :param x_train: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model
         :param y_train: the target vector (T dimensional)
@@ -67,9 +67,11 @@ class LinearRegression:
         self.K += 1
 
         # add column with ones for the intercept
-        X_ = np.ones((self.T, self.K))
-        X_[:, 1:] = x_train
-        x_train = X_
+        #X_ = np.ones((self.T, self.K))
+        #X_[:, 1:] = x_train
+        #x_train = X_
+        dummy_column = np.ones(shape=(self.T, 1))
+        x_train = np.concatenate((dummy_column, x_train), axis=1)
 
         # closed form solution: (X.T * X)^(-1) * X.T * y
         self.beta = np.linalg.inv(x_train.T.dot(x_train)).dot(x_train.T.dot(y_train))
