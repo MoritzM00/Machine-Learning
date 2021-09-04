@@ -13,16 +13,19 @@ class LinearModel(metaclass=ABCMeta):
         """Fit model."""
 
     @abstractmethod
-    def predict(self, X: ArrayLike):
+    def predict(self, X: ArrayLike) -> float:
         """
         Predict using the linear model.
 
-        :param X: samples
+        Parameters
+        ----------
+        X : array_like, shape (n_features,)
+            Sample.
 
-        :type X: array-like, shape (n_samples, n_features)
-
-        :return: the predicted values
-        :rtype: array, shape (n_samples,)
+        Returns
+        -------
+        float
+            The predicted value
         """
 
 
@@ -34,7 +37,10 @@ class RegressorMixin(metaclass=ABCMeta):
     @abstractmethod
     def score(self) -> float:
         """
-        Returns the :math:`R^2` score of the model.
+        Calculates the :math:`R^2` score of the model.
 
-        :return: the score of the model
+        Returns
+        -------
+        float
+            the score of the model
         """

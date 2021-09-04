@@ -7,33 +7,34 @@ from ..base import LinearModel, RegressorMixin
 
 
 class LinearRegression(LinearModel, RegressorMixin):
-    r"""
-    Ordinary least squares (OLS) linear regression model.
+    """Ordinary least squares (OLS) linear regression
 
     We denote the multiple linear model as the following:
+       y = ßX + e
 
-    .. math::
-       y_t = \beta_1 + \beta_2 x_{t2} + \beta_3 x_{t3} + \cdots + \beta_K x_{tK} + e_t
-    with :math:`t = 1, \ldots, T`
-    and :math:`e_t` being the error term. We assume that :math:`e_t \sim N(0, \sigma^2)`
+    where y is the target vector and ß the coefficients of the model.
+    X is called the design matrix and e is the error term.
 
-    In matrix notation, we can simply write
+    We assume that e is normally distributed with zero mean.
+    X must have full rank.
 
-    .. math::
-       y = \beta X + e
-    where :math:`X \in \mathbb{R}^{TxK}` the design matrix
-    and :math:`e, y \in \mathbb{R}^T`
+    Attributes
+    ----------
+    beta : ndarray
+        The coefficients of the model.
+    residuals : ndarray
+        Error terms.
+    y_train : ndarray
+        Target training data.
+    T : int
+        Number of samples.
+    K : int
+        Number of regressors.
     """
 
     def __init__(self):
         """
         Initializes the model.
-
-        beta: includes bias, beta[0], and weights, beta[:1]
-        residuals: error of the predicted values for y
-        y_train: training data for the target vector y
-        T: number of samples
-        K: number of regressors
         """
         self.beta = None
         self.y_train = None
@@ -42,17 +43,31 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.K = None
 
     def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> LinearRegression:
-        """
-        Fits the Model to X and y using the ordinary least squares estimator.
-        The OLS estimator has a closed form solution:
+        """Fits the linear regression model using OLS.
+
+        Solves the normal equation to calculate the coefficients in a
+        closed form solution:
 
         .. math::
           \\beta = (X^T X)^{-1} \cdot X^T y
 
-        :param x_train: the Tx(K-1) regressor matrix, the k-th variable (the intercept) will be added by the model
-        :param y_train: the target vector (T dimensional)
-        :return: self
-        :raises ValueError: if y_train is not 1D
+        Parameters
+        ----------
+        x_train : array_like
+            Training data.
+        y_train: array_like
+            Training target data.
+
+        Returns
+        -------
+        self
+
+        Raises
+        ------
+        ValueError
+            If `X_train` is not 2D
+            or if  `y_train` is not 1D.
+
         """
         x_train = np.array(x_train)
         y_train = np.array(y_train)
@@ -82,14 +97,20 @@ class LinearRegression(LinearModel, RegressorMixin):
         return self
 
     def predict(self, x: npt.ArrayLike) -> float:
-        """
-        Predicts y using the x data vector.
+        """Predicts the target for x.
 
-        :param x: a K-dimensional array
-        :return: the predicted values for y
+        Parameters
+        ----------
+        x : array_like, shape (K,)
+            Samples
 
-        :raises ValueError: if x is not 2D
+        Returns
+        -------
+        float
+            The predicted value for x.
+
         """
+
         x = np.array(x)
         if x.ndim != 2:
             raise ValueError("x must be 2D")
@@ -106,6 +127,17 @@ class LinearRegression(LinearModel, RegressorMixin):
          - residual variance (RSS)
          - root mean squared error (RMSE)
 
+        Parameters
+        ----------
+        verbose : bool, default=False
+            if True, then the measures get printed as well
+
+        Return
+        -------
+        4-tuple of float
+
+        Notes
+        -----
         The total sum of squares (TSS) is equal to the explained variance (ESS)
         plus the residual variance (RSS):
         :math:`TSS = ESS + RSS`
@@ -116,9 +148,6 @@ class LinearRegression(LinearModel, RegressorMixin):
         If the adjusted r-squared is significantly lower than the r-squared
         the model may have too many regressors which do not have a significant impact on the models predictions.
         -> In a "good" model, both measures are close to each other.
-
-        :param verbose: if True, then the measures get printed as well
-        :return: a 4-tuple of floats
         """
         var_residuals = np.dot(self.residuals, self.residuals) / (self.T - self.K)
 
