@@ -1,6 +1,5 @@
 from __future__ import annotations
 import numpy as np
-import numpy.typing as npt
 from math import sqrt
 
 from ..base import LinearModel, RegressorMixin
@@ -42,7 +41,7 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.T = None
         self.K = None
 
-    def fit(self, x_train: npt.ArrayLike, y_train: npt.ArrayLike) -> LinearRegression:
+    def fit(self, X, y) -> LinearRegression:
         """Fits the linear regression model using OLS.
 
         Solves the normal equation to calculate the coefficients in a
@@ -53,9 +52,9 @@ class LinearRegression(LinearModel, RegressorMixin):
 
         Parameters
         ----------
-        x_train : array_like
+        X : array_like, shape (T, K)
             Training data.
-        y_train: array_like
+        y: array_like, shape (T,)
             Training target data.
 
         Returns
@@ -69,8 +68,8 @@ class LinearRegression(LinearModel, RegressorMixin):
             or if  `y_train` is not 1D.
 
         """
-        x_train = np.array(x_train)
-        y_train = np.array(y_train)
+        x_train = np.array(X)
+        y_train = np.array(y)
         self.y_train = y_train
 
         if x_train.ndim == 1:
@@ -96,18 +95,18 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.residuals = self.y_train - y_hat
         return self
 
-    def predict(self, x: npt.ArrayLike) -> float:
-        """Predicts the target for x.
+    def predict(self, x) -> float:
+        """Predicts the target.
 
         Parameters
         ----------
         x : array_like, shape (K,)
-            Samples
+            Samples.
 
         Returns
         -------
         float
-            The predicted value for x.
+            The predicted value for `x`
 
         """
 
@@ -119,7 +118,7 @@ class LinearRegression(LinearModel, RegressorMixin):
     def score(self) -> float:
         raise NotImplementedError
 
-    def summary(self, verbose=False) -> (float, float, float, float):
+    def summary(self, verbose: bool = False) -> (float, float, float, float):
         """
         Calculates the following measures of goodness:
          - r-squared
@@ -163,5 +162,5 @@ class LinearRegression(LinearModel, RegressorMixin):
             print(f"Adjusted R-Squared = {adj_r_squared:.4f}")
             print(f"Residual variance (RSS) = {var_residuals:.4f}")
             print(f"Root Mean Squared Error = {rmse:.4f}")
-
+        # TODO: return named tuple
         return r_squared, adj_r_squared, var_residuals, rmse

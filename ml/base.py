@@ -1,19 +1,16 @@
 from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 
-from numpy.typing import ArrayLike
-import numpy as np
-
 
 class LinearModel(metaclass=ABCMeta):
     """Base class for all linear models"""
 
     @abstractmethod
-    def fit(self, X: ArrayLike, y: ArrayLike) -> LinearModel:
+    def fit(self, X, y) -> LinearModel:
         """Fit model."""
 
     @abstractmethod
-    def predict(self, X: ArrayLike) -> float:
+    def predict(self, X) -> float:
         """
         Predict using the linear model.
 
