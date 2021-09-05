@@ -3,6 +3,7 @@ import numpy as np
 from math import sqrt
 
 from ..base import LinearModel, RegressorMixin
+from ..validation import check_X_y, check_2D
 
 
 class LinearRegression(LinearModel, RegressorMixin):
@@ -61,24 +62,9 @@ class LinearRegression(LinearModel, RegressorMixin):
         -------
         LinearRegression
             The fitted model.
-
-        Raises
-        ------
-        ValueError
-            If `X_train` is not 2D
-            or if  `y_train` is not 1D.
-
         """
-        x_train = np.array(X)
-        y_train = np.array(y)
+        x_train, y_train = check_X_y(X, y)
         self.y_train = y_train
-
-        if x_train.ndim == 1:
-            # X must be at least two-dimensional to be used in numpy matmul function
-            x_train = np.atleast_2d(x_train).T
-
-        if y_train.ndim != 1:
-            raise ValueError("y_train must be 1D")
 
         self.T, self.K = x_train.shape
         # because a column will be added, we need to increment K
@@ -110,10 +96,7 @@ class LinearRegression(LinearModel, RegressorMixin):
             The predicted value for `x`
 
         """
-
-        x = np.array(x)
-        if x.ndim != 2:
-            raise ValueError("x must be 2D")
+        x = check_2D(x, "x")
         return np.dot(x, self.beta[1:]) + self.beta[0]
 
     def score(self) -> float:
