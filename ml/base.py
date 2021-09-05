@@ -7,7 +7,20 @@ class LinearModel(metaclass=ABCMeta):
 
     @abstractmethod
     def fit(self, X, y) -> LinearModel:
-        """Fit model."""
+        """Fit model.
+
+        Parameters
+        ----------
+        X : array_like, shape (n_samples, n_features)
+            Training data.
+        y : array_like, shape (n_samples,)
+            Training target data
+
+        Returns
+        -------
+        LinearModel
+            The fitted model.
+        """
 
     @abstractmethod
     def predict(self, X) -> float:
@@ -17,7 +30,7 @@ class LinearModel(metaclass=ABCMeta):
         Parameters
         ----------
         X : array_like, shape (n_features,)
-            Sample.
+            Samples.
 
         Returns
         -------

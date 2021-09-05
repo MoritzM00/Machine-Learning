@@ -59,7 +59,8 @@ class LinearRegression(LinearModel, RegressorMixin):
 
         Returns
         -------
-        self
+        LinearRegression
+            The fitted model.
 
         Raises
         ------
