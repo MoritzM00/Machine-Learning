@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 
-from ml.validation import check_X_y, check_2D
+from ml.validation import check_X_y, check_array, check_consistent_length
 
 
 class TestValidation(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestValidation(unittest.TestCase):
         X = np.array([1, 2])
         self.assertRaises(
             ValueError,
-            lambda: check_2D(X)
+            lambda: check_array(X)
         )
 
     def test_check_X_y(self):
@@ -26,6 +26,15 @@ class TestValidation(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: check_X_y(X, y2)
+        )
+
+    def test_check_consistent_length(self):
+        self.assertRaises(
+            ValueError,
+            lambda: check_consistent_length(
+                [[1, 2]],
+                [1, 2],
+            )
         )
 
 
