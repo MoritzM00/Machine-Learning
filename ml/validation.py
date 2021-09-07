@@ -23,41 +23,53 @@ def check_X_y(X, y) -> (ndarray, ndarray):
         or y is not 1D
         or if the number of rows in X is not equal to the length of y
     """
-    X = check_2D(X, "X")
-    y = np.array(y)
-    if y.ndim != 1:
-        raise ValueError(f"y must be 1D, instead got an {y.ndim}D array")
-    if X.shape[0] != y.shape[0]:
-        raise ValueError(f"mismatched dimensions of X and y:"
-                         f" Rows in X = {X.shape[0]} != {y.shape[0]} = length of y")
+    X = check_array(X)
+    y = check_array(y, ensure_2d=False)
+    check_consistent_length(X, y)
     return X, y
 
 
-def check_2D(array, arr_name: str = "") -> ndarray:
+def check_array(array, ensure_2d=True) -> ndarray:
     """
-    Checks if the given array is 2D and throws a ValueError otherwise.
+    Checks if the given array is 2D by default and throws a ValueError otherwise.
 
     Parameters
     ----------
     array : array_like
         The array to check.
-    arr_name : str, optional
-        The name of the array to display in the error message.
+    ensure_2d : bool, default=True
+        True if the input array has to be 2D.
 
     Returns
     -------
     ndarray
         The checked array.
-
-    Raises
-    ------
-    ValueError
-        If `array` is not 2D.
     """
     arr = np.array(array)
-    if arr.ndim != 2:
-        if arr_name:
-            arr_name = " `" + arr_name + "`"
-        msg = f"The input array{arr_name} must be 2D, instead got an {array.ndim}D array."
-        raise ValueError(msg)
+    if arr.ndim == 0:
+        raise ValueError(f"Expected 2D array but got scalar array instead: {arr}")
+    elif arr.ndim == 1 and ensure_2d:
+        raise ValueError(f"Expected 2D array, but got 1D array instead: {arr}")
+    elif arr.ndim > 2:
+        raise ValueError(f"Expected 2D array, but got an {arr.ndim}D array instead: {arr}")
     return arr
+
+
+def check_consistent_length(*arrays):
+    """
+    Check that all arrays have consistent first dimensions.
+    Checks whether all objects in arrays have the same shape or length.
+
+    Parameters
+    ----------
+    *arrays : list or tuple of input objects.
+        Objects that will be checked for consistent length.
+    """
+    arrays = [np.array(X) for X in arrays if X is not None]
+    lengths = [X.shape[0] for X in arrays]
+    uniques = np.unique(lengths)
+    if len(uniques) > 1:
+        raise ValueError(
+            "Found input variables with inconsistent numbers of samples: %r"
+            % [int(l) for l in lengths]
+        )
