@@ -40,7 +40,7 @@ class LinearModel(metaclass=ABCMeta):
 
 
 class RegressorMixin(metaclass=ABCMeta):
-    """Mixin class for all regression estimators."""
+    """Mixin class for all linear_model estimators."""
 
     _estimator_type = "regressor"
 

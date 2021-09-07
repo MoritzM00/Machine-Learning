@@ -7,7 +7,7 @@ from ..validation import check_X_y, check_array, check_consistent_length
 
 
 class LinearRegression(LinearModel, RegressorMixin):
-    """Ordinary least squares (OLS) linear regression
+    """Ordinary least squares (OLS) linear linear_model
 
     We denote the multiple linear model as the following:
        y = ßX + e
@@ -43,7 +43,7 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.K = None
 
     def fit(self, X, y) -> LinearRegression:
-        """Fits the linear regression model using OLS.
+        """Fits the linear linear_model model using OLS.
 
         Solves the normal equation to calculate the coefficients in a
         closed form solution:

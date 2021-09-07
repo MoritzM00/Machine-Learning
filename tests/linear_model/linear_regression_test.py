@@ -1,5 +1,5 @@
 import unittest
-from ml.regression.linear_regression import LinearRegression
+from ml.linear_model.linear_regression import LinearRegression
 import numpy as np
 
 
