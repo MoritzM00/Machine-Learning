@@ -3,7 +3,7 @@ import numpy as np
 from math import sqrt
 
 from ..base import LinearModel, RegressorMixin
-from ..validation import check_X_y, check_2D
+from ..validation import check_X_y, check_array, check_consistent_length
 
 
 class LinearRegression(LinearModel, RegressorMixin):
@@ -82,12 +82,12 @@ class LinearRegression(LinearModel, RegressorMixin):
         self.residuals = self.y_train - y_hat
         return self
 
-    def predict(self, x) -> float:
+    def predict(self, X) -> float:
         """Predicts the target.
 
         Parameters
         ----------
-        x : array_like, shape (K,)
+        X : array_like, shape (K,)
             Samples.
 
         Returns
@@ -96,8 +96,8 @@ class LinearRegression(LinearModel, RegressorMixin):
             The predicted value for `x`
 
         """
-        x = check_2D(x, "x")
-        return np.dot(x, self.beta[1:]) + self.beta[0]
+        X = check_array(X)
+        return np.dot(X, self.beta[1:]) + self.beta[0]
 
     def score(self) -> float:
         raise NotImplementedError
