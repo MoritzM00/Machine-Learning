@@ -4,6 +4,5 @@ This project implements several well known statistical methods used to perform i
 *work in progress*
 
 ## Contents
-- Confidence Intervals
-- Regression Models
-- Neural Networks
+- Linear Models (such as Linear Regression, Ridge Regression etc.) 
+- Neural Networks (later)
