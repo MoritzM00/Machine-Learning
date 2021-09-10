@@ -43,7 +43,7 @@ def check_array(array, ensure_2d=True) -> ndarray:
     Returns
     -------
     ndarray
-        The checked array.
+        A copy of the array.
     """
     arr = np.array(array)
     if arr.ndim == 0:
@@ -52,7 +52,7 @@ def check_array(array, ensure_2d=True) -> ndarray:
         raise ValueError(f"Expected 2D array, but got 1D array instead: {arr}")
     elif arr.ndim > 2:
         raise ValueError(f"Expected 2D array, but got an {arr.ndim}D array instead: {arr}")
-    return arr
+    return arr.copy()
 
 
 def check_consistent_length(*arrays):
