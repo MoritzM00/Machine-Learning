@@ -14,17 +14,20 @@ class TestLinearRegression(unittest.TestCase):
         X = np.array(X).T
         model.fit(X, y)
         for b1, b2 in zip(beta, model.beta):
-            self.assertAlmostEqual(b1, b2, delta=0.01)
+            self.assertAlmostEqual(b1, b2, delta=0.001)
 
         y = [15, 19, 21, 22, 23, 28, 27, 29]
         X = [19, 21, 23, 26, 27, 31, 33, 36]
+        X = np.reshape(X, (-1, 1))
 
         beta = [1.94, 0.78]
 
-        model = LinearRegression()
-        model.fit(X, y)
+        model = LinearRegression().fit(X, y)
         for b1, b2 in zip(beta, model.beta):
-            self.assertAlmostEqual(b1, b2, delta=0.01)
+            self.assertAlmostEqual(b1, b2, delta=0.001)
+
+        print(model.predict(np.array([[2], [19]])))
+        print(model.score())
 
 
 if __name__ == '__main__':

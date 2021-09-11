@@ -2,11 +2,13 @@ from __future__ import annotations
 import numpy as np
 from math import sqrt
 
-from ..base import LinearModel, RegressorMixin
+from numpy import ndarray
+
 from ..validation import check_X_y, check_array, check_consistent_length
+from ..metrics.regression import r2_score, adjusted_r2_score
 
 
-class LinearRegression(LinearModel, RegressorMixin):
+class LinearRegression:
     """Ordinary least squares (OLS) linear linear_model
 
     We denote the multiple linear model as the following:
@@ -22,13 +24,13 @@ class LinearRegression(LinearModel, RegressorMixin):
     ----------
     beta : ndarray
         The coefficients of the model.
-    residuals : ndarray
-        Error terms.
-    y_train : ndarray
+    X : ndarray
+        Training data
+    y : ndarray
         Target training data.
-    T : int
+    n_samples : int
         Number of samples.
-    K : int
+    n_features : int
         Number of regressors.
     """
 
@@ -37,10 +39,10 @@ class LinearRegression(LinearModel, RegressorMixin):
         Initializes the model.
         """
         self.beta = None
-        self.y_train = None
-        self.residuals = None
-        self.T = None
-        self.K = None
+        self.X = None
+        self.y = None
+        self.n_samples = None
+        self.n_features = None
 
     def fit(self, X, y) -> LinearRegression:
         """Fits the linear linear_model model using OLS.
@@ -53,9 +55,9 @@ class LinearRegression(LinearModel, RegressorMixin):
 
         Parameters
         ----------
-        X : array_like, shape (T, K)
+        X : array_like, shape (n_samples, n_features)
             Training data.
-        y: array_like, shape (T,)
+        y: array_like, shape (n_samples,)
             Training target data.
 
         Returns
@@ -63,61 +65,66 @@ class LinearRegression(LinearModel, RegressorMixin):
         LinearRegression
             The fitted model.
         """
-        x_train, y_train = check_X_y(X, y)
-        self.y_train = y_train
+        self.X, self.y = check_X_y(X, y)
 
-        self.T, self.K = x_train.shape
-        # because a column will be added, we need to increment K
-        self.K += 1
+        self.n_samples, self.n_features = X.shape
+        # because a column will be added:
+        self.n_features += 1
 
         # add column with ones for the intercept
-        dummy_column = np.ones(shape=(self.T, 1))
-        x_train = np.concatenate((dummy_column, x_train), axis=1)
+        dummy_column = np.ones(shape=(self.n_samples, 1))
+        self.X = np.concatenate((dummy_column, self.X), axis=1)
 
         # closed form solution: (X.T * X)^(-1) * X.T * y
-        self.beta = np.linalg.inv(x_train.T.dot(x_train)).dot(x_train.T.dot(y_train))
-
-        # calculate residuals
-        y_hat = np.matmul(x_train, self.beta)
-        self.residuals = self.y_train - y_hat
+        self.beta = np.linalg.inv(self.X.T.dot(self.X)).dot(self.X.T.dot(self.y))
         return self
 
-    def predict(self, X) -> float:
+    def predict(self, X, intercept_col=False) -> ndarray:
         """Predicts the target.
 
         Parameters
         ----------
-        X : array_like, shape (K,)
+        X : array_like, shape (n_samples, n_features)
             Samples.
+        intercept_col : bool, default=False
+            If True, then the first column of X must be a vectors of ones.
 
         Returns
         -------
-        float
-            The predicted value for `x`
+        y_pred : ndarray
+            The predicted values for `X`.
 
         """
         X = check_array(X)
-        return np.dot(X, self.beta[1:]) + self.beta[0]
+        if intercept_col:
+            y_pred = X.dot(self.beta)
+        else:
+            y_pred = X.dot(self.beta[1:]) + self.beta[0]
+        return y_pred
 
-    def score(self) -> float:
-        raise NotImplementedError
-
-    def summary(self, verbose: bool = False) -> (float, float, float, float):
+    def score(self):
         """
-        Calculates the following measures of goodness:
-         - r-squared
-         - adjusted r-squared
-         - residual variance (RSS)
-         - root mean squared error (RMSE)
+        Return the score of the model, which is the r2 measure.
 
-        Parameters
-        ----------
-        verbose : bool, default=False
-            if True, then the measures get printed as well
-
-        Return
+        Returns
         -------
-        4-tuple of float
+        (r2, adj_r2) : (float, float)
+            The score of the model.
+        """
+        y_pred = self.predict(self.X, intercept_col=True)
+        print(y_pred)
+        r2 = r2_score(self.y, y_pred)
+        adj_r2 = adjusted_r2_score(self.y, y_pred, n_features=self.n_features)
+        return r2, adj_r2
+
+    def residual_variance(self):
+        """
+        Calculates the empirical variance of the residuals
+
+        Returns
+        -------
+        float64
+            The empirical residual variance.
 
         Notes
         -----
@@ -125,26 +132,6 @@ class LinearRegression(LinearModel, RegressorMixin):
         plus the residual variance (RSS):
         :math:`TSS = ESS + RSS`
 
-        As the r-squared measure increases artificially with the number of regressors, it is important
-        to compare it with the adjusted r-squared, which eliminates this problem by scaling it with a factor
-        that is anti-proportionally to the number of regressors in the model.
-        If the adjusted r-squared is significantly lower than the r-squared
-        the model may have too many regressors which do not have a significant impact on the models predictions.
-        -> In a "good" model, both measures are close to each other.
         """
-        var_residuals = np.dot(self.residuals, self.residuals) / (self.T - self.K)
-
-        # Root mean squared error
-        rmse = sqrt(1 / self.T * sum(self.residuals ** 2))
-
-        y_mean = self.y_train.mean()
-        r_squared = 1 - (sum(self.residuals ** 2)) / sum((self.y_train - y_mean) ** 2)
-        adj_r_squared = 1 - (self.T - 1) / (self.T - self.K) * (1 - r_squared)
-
-        if verbose:
-            print(f"R-Squared = {r_squared:.4f}")
-            print(f"Adjusted R-Squared = {adj_r_squared:.4f}")
-            print(f"Residual variance (RSS) = {var_residuals:.4f}")
-            print(f"Root Mean Squared Error = {rmse:.4f}")
-        # TODO: return named tuple
-        return r_squared, adj_r_squared, var_residuals, rmse
+        residuals = (self.y - self.predict(self.X)) ** 2
+        return np.sum(residuals) / (self.n_samples - self.n_features)
