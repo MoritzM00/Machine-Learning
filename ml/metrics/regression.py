@@ -116,7 +116,7 @@ def r2_score(y_true, y_pred):
     """
     y_true, y_pred = _validate_targets(y_true, y_pred)
     residual_sum_of_squares = np.sum((y_true - y_pred) ** 2)
-    total_sum_of_squares = np.sum((y_true - np.average(y_true)))
+    total_sum_of_squares = np.sum((y_true - np.average(y_true) ** 2))
     return 1 - residual_sum_of_squares / total_sum_of_squares
 
 
