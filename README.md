@@ -4,5 +4,6 @@ This project implements several well known statistical methods used to perform i
 *work in progress*
 
 ## Contents
-- Linear Models (such as Linear Regression, Ridge Regression etc.) 
+- Linear Models (such as Linear Regression, Ridge Regression etc.)
+- Decomposition (Principal Component Analysis)
 - Neural Networks (later)
