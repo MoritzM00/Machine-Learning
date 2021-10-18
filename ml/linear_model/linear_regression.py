@@ -45,7 +45,7 @@ class LinearRegression:
         self.n_features = None
 
     def fit(self, X, y) -> LinearRegression:
-        """Fits the linear linear_model model using OLS.
+        """Fits the linear model using OLS.
 
         Solves the normal equation to calculate the coefficients in a
         closed form solution:
@@ -57,7 +57,7 @@ class LinearRegression:
         ----------
         X : array_like, shape (n_samples, n_features)
             Training data.
-        y: array_like, shape (n_samples,)
+        y : array_like, shape (n_samples,)
             Training target data.
 
         Returns
@@ -112,7 +112,6 @@ class LinearRegression:
             The score of the model.
         """
         y_pred = self.predict(self.X, intercept_col=True)
-        print(y_pred)
         r2 = r2_score(self.y, y_pred)
         adj_r2 = adjusted_r2_score(self.y, y_pred, n_features=self.n_features)
         return r2, adj_r2
