@@ -102,17 +102,14 @@ class PCA:
         """
         X = check_array(X)
         self.n_samples, self.n_features = X.shape
-        print(X.shape)
         # Center X
         self.mean = X.mean(axis=0)
         X -= self.mean
 
         # get the covariance matrix of the data
         cov = np.cov(X, rowvar=False)
-        print(cov)
         # eigendecomposition of the cov matrix
         eigenvalues, eigenvectors = la.eigh(cov)
-        print(eigenvectors.shape)
 
         # sort the eigenvectors by eigenvalues from largest to smallest
         idx = eigenvalues.argsort()[::-1][:self.n_components]
