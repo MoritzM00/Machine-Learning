@@ -1,2 +1,7 @@
 .idea
 .venv/
+
+# Used by py.test
+.cache
+.pytest_cache/
+_configtest.o.d
