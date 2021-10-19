@@ -1,10 +1,17 @@
-.idea
+.idea/*
+.vscode/*
 .venv/
 
-dist/
+/dist/*
+build
 
 # Used by py.test
 .cache
 .pytest_cache/
 _configtest.o.d
 __pycache__/
+
+.tox
+.coverage
+*.pyc
+.mypay_cache
