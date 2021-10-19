@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ml"
+version = "0.1.0"
+description = "A introduction to machine learning that focuses on the understanding of the algorithms instead of efficiency"
+authors = ["Moritz Mistol <moritz.mistol@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/hackersandslackers/python-poetry-tutorial/"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "*"
+sklearn = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
