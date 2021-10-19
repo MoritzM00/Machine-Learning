@@ -8,12 +8,14 @@ readme = "README.md"
 repository = "https://github.com/hackersandslackers/python-poetry-tutorial/"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 numpy = "*"
 sklearn = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
+pre-commit = "*"
+black = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
