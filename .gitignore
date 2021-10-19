@@ -1,6 +1,8 @@
 .idea
 .venv/
 
+dist/
+
 # Used by py.test
 .cache
 .pytest_cache/
