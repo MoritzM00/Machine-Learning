@@ -7,3 +7,4 @@ dist/
 .cache
 .pytest_cache/
 _configtest.o.d
+__pycache__/
