@@ -19,7 +19,7 @@ def mean_absolute_error(y_true, y_pred):
         The mean absolute error.
     """
     y_true, y_pred = _validate_targets(y_true, y_pred)
-    return np.average(y_true - y_pred)
+    return np.average(np.abs(y_true - y_pred))
 
 
 def median_absolute_error(y_true, y_pred):
@@ -107,12 +107,14 @@ def r2_score(y_true, y_pred):
 
     Notes
     -----
-    As the r-squared measure increases artificially with the number of regressors, it is important
-    to compare it with the adjusted r-squared, which eliminates this problem by scaling it with a factor
+    As the r-squared measure increases artificially with the number of
+    regressors, it is important to compare it with the adjusted r-squared,
+    which eliminates this problem by scaling it with a factor
     that is anti-proportionally to the number of regressors in the model.
     If the adjusted r-squared is significantly lower than the r-squared
-    the model may have too many regressors which do not have a significant impact on the models predictions.
-    Therefore, in a "good" model, both measures are close to each other.
+    the model may have too many regressors which do not have a significant
+    impact on the models predictions. Therefore, in a "good" model,
+    both measures are close to each other.
     """
     y_true, y_pred = _validate_targets(y_true, y_pred)
     residual_sum_of_squares = np.sum((y_true - y_pred) ** 2)
@@ -143,7 +145,9 @@ def adjusted_r2_score(y_true, y_pred, n_features):
     """
     y_true, y_pred = _validate_targets(y_true, y_pred)
     n_samples: int = len(y_true)
-    return 1 - ((n_samples - 1) / (n_samples - n_features)) * (1 - r2_score(y_true, y_pred))
+    return 1 - ((n_samples - 1) / (n_samples - n_features)) * (
+        1 - r2_score(y_true, y_pred)
+    )
 
 
 def _validate_targets(y_true, y_pred):
