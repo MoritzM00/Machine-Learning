@@ -24,6 +24,11 @@ class PCA:
     """
 
     def __init__(self, n_components):
+        if n_components <= 0:
+            raise ValueError(
+                f"n_components has to be a positive integer, "
+                f"but got {n_components=} instead"
+            )
         self.n_components = n_components
         self.n_samples = None
         self.n_features = None
@@ -101,6 +106,7 @@ class PCA:
             The fitted model.
         """
         X = check_array(X)
+
         self.n_samples, self.n_features = X.shape
         # Center X
         self.mean = X.mean(axis=0)
@@ -112,7 +118,7 @@ class PCA:
         eigenvalues, eigenvectors = la.eigh(cov)
 
         # sort the eigenvectors by eigenvalues from largest to smallest
-        idx = eigenvalues.argsort()[::-1][:self.n_components]
+        idx = eigenvalues.argsort()[::-1][: self.n_components]
         self.eigenvalues = eigenvalues[idx]
         self.components = eigenvectors[:, idx]
         return self
