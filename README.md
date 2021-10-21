@@ -1,12 +1,15 @@
 # Intro to Machine Learning
 
 ![Tests](https://github.com/MoritzM00/Machine-Learning/actions/workflows/tests.yml/badge.svg)
+![License](https://img.shields.io/github/license/MoritzM00/Machine-Learning?color=blue)
 
-This project implements several well known statistical methods used to perform inductive analysis on sample data
+---
 
-*work in progress*
+## Overview
+This project implements several well known statistical methods used to analyse high-dimensional data.
+The algorithms do not aim to be very efficient, but to foster the understanding of the methods.
 
-## Contents
+## Table of contents
 - Linear Models (such as Linear Regression, Ridge Regression etc.)
 - Decomposition (Principal Component Analysis)
 - Neural Networks (later)
