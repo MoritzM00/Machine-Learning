@@ -1,6 +1,6 @@
 import numpy as np
 from numpy.testing import assert_allclose
-from ml.linear_model.linear_regression import LinearRegression
+from ml.linear_model import LinearRegression
 
 
 def test_linear_regression_complex():
