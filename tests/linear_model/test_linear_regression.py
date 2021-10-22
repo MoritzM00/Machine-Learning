@@ -1,6 +1,6 @@
-from sklearn.utils._testing import assert_array_almost_equal
-from ml.linear_model.linear_regression import LinearRegression
 import numpy as np
+from numpy.testing import assert_allclose
+from ml.linear_model.linear_regression import LinearRegression
 
 
 def test_linear_regression_complex():
@@ -14,7 +14,7 @@ def test_linear_regression_complex():
     model = LinearRegression()
     X = np.array(X).T
     model.fit(X, y)
-    assert_array_almost_equal(beta, model.beta, decimal=4)
+    assert_allclose(beta, model.beta, rtol=1e-4)
 
 
 def test_linear_regression_simple():
@@ -25,4 +25,4 @@ def test_linear_regression_simple():
     beta = [1.94, 0.78]
 
     model = LinearRegression().fit(X, y)
-    assert_array_almost_equal(beta, model.beta, decimal=4)
+    assert_allclose(beta, model.beta, rtol=1e-4)

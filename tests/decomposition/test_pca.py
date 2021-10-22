@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
+from numpy.testing import assert_allclose
 from ml.decomposition.pca import PCA
-from sklearn.utils._testing import assert_allclose
 from sklearn.datasets import load_iris
 
 iris = load_iris()
