@@ -31,3 +31,15 @@ def test_linear_regression_simple():
     model = LinearRegression().fit(X, y)
     assert_allclose(coef, model.coef_, rtol=1e-4)
     assert math.isclose(intercept, model.intercept_, rel_tol=1e-4)
+
+
+def test_linear_regression_prediction_score():
+    X = [[0], [1]]
+    y = [0, 1]
+    model = LinearRegression().fit(X, y)
+    assert model.predict([[10]]) == 10
+
+    X_test = [[2], [3]]
+    y_test = [2, 3]
+
+    assert model.score(X_test, y_test) == 1.0
