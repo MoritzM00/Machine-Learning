@@ -1,17 +1,11 @@
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
 from sklearn.datasets import load_iris
 
 from ml.decomposition import PCA
 
 iris = load_iris()
-
-
-@pytest.mark.parametrize("n_components", [-1, 0])
-def test_invalid_input(n_components):
-    with pytest.raises(ValueError):
-        PCA(n_components=n_components)
 
 
 @pytest.mark.parametrize("n_components", range(1, iris.data.shape[1]))

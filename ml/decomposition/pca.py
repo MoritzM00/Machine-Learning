@@ -1,9 +1,12 @@
 import numpy as np
 import numpy.linalg as la
+from sklearn.base import BaseEstimator
+
+from ml.base import TransformerMixin
 from ml.validation import check_array
 
 
-class PCA:
+class PCA(TransformerMixin, BaseEstimator):
     """
     Principal Component Analysis.
 
@@ -11,30 +14,20 @@ class PCA:
     ----------
     n_components : int
         Number of principal components.
-    n_samples : int
+    n_samples_ : int
         Number of Samples.
-    n_features : int
+    n_features_ : int
         Number of features.
-    components : ndarray of shape (n_features, n_components)
+    components_ : ndarray of shape (n_features, n_components)
         Principal Components.
-    eigenvalues : ndarray of shape (n_components,)
+    eigenvalues_ : ndarray of shape (n_components,)
         The eigenvalues of the covariance matrix of the training data.
-    mean : float64
+    mean_ : float64
         Mean of the samples.
     """
 
     def __init__(self, n_components):
-        if n_components <= 0:
-            raise ValueError(
-                f"n_components has to be a positive integer, "
-                f"but got {n_components=} instead"
-            )
         self.n_components = n_components
-        self.n_samples = None
-        self.n_features = None
-        self.components = None
-        self.eigenvalues = None
-        self.mean = None
 
     def transform(self, X):
         """
@@ -51,9 +44,9 @@ class PCA:
             The transformed input matrix `X`
         """
         X = check_array(X)
-        if self.mean is not None:
-            X -= self.mean
-        return np.dot(X, self.components)
+        if self.mean_ is not None:
+            X -= self.mean_
+        return np.dot(X, self.components_)
 
     def inverse_transform(self, X):
         """
@@ -68,26 +61,7 @@ class PCA:
         ndarray of shape  (n_samples, n_features)
             The original training data.
         """
-        return np.dot(X, self.components.T) + self.mean
-
-    def fit_transform(self, X, y=None):
-        """
-        Fits the model to X and transforms X.
-        Equivalent to fit(X).transform(X)
-
-        Parameters
-        ----------
-        X : array_like, shape (n_samples, n_features)
-            Training data.
-        y : Ignored
-            No usage. (only for API consistency of fit method)
-
-        Returns
-        -------
-        ndarray of shape (n_samples, n_components)
-            The transformed training data.
-        """
-        return self.fit(X).transform(X)
+        return np.dot(X, self.components_.T) + self.mean_
 
     def fit(self, X, y=None):
         """
@@ -107,18 +81,22 @@ class PCA:
         """
         X = check_array(X)
 
-        self.n_samples, self.n_features = X.shape
+        self.n_samples_, self.n_features_ = X.shape
         # Center X
-        self.mean = X.mean(axis=0)
-        X -= self.mean
+        self.mean_ = X.mean(axis=0)
+        X -= self.mean_
 
         # get the covariance matrix of the data
+        # by calculation
+        # cov = X.T.dot(X) / self.n_samples_
+        # or use np.cov function
         cov = np.cov(X, rowvar=False)
+
         # eigendecomposition of the cov matrix
         eigenvalues, eigenvectors = la.eigh(cov)
 
         # sort the eigenvectors by eigenvalues from largest to smallest
         idx = eigenvalues.argsort()[::-1][: self.n_components]
-        self.eigenvalues = eigenvalues[idx]
-        self.components = eigenvectors[:, idx]
+        self.eigenvalues_ = eigenvalues[idx]
+        self.components_ = eigenvectors[:, idx]
         return self
