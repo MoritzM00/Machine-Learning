@@ -1,7 +1,7 @@
-import pytest
 import numpy as np
+import pytest
 
-from ml.validation import check_X_y, check_array, check_consistent_length
+from ml.validation import check_array, check_consistent_length, check_X_y
 
 
 def test_not_2D():

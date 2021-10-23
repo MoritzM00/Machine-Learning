@@ -1,6 +1,6 @@
 from __future__ import annotations
-import numpy as np
 
+import numpy as np
 from sklearn.utils.validation import check_X_y
 
 from ml.base import LinearModel, RegressorMixin

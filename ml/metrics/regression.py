@@ -1,4 +1,5 @@
 import numpy as np
+
 from ..validation import check_array, check_consistent_length
 
 
