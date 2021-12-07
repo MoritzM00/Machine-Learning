@@ -26,6 +26,7 @@ https://github.com/python-poetry/poetry/blob/master/README.md#installation
 Once you have Poetry installed, clone the repository and execute:
 
 ```bash
+poetry config virtualenvs.in-project true
 poetry install
 ```
 
