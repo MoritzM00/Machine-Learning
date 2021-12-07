@@ -8,9 +8,10 @@ readme = "README.md"
 repository = "https://github.com/MoritzM00/Machine-Learning"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8,<3.10"
 numpy = "*"
-sklearn = "*"
+scikit-learn="1.0.1"
+scipy="1.7.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
