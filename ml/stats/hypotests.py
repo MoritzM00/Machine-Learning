@@ -1,8 +1,8 @@
 from collections import namedtuple
-from scipy import stats
+
 import numpy as np
 import numpy.linalg as la
-
+from scipy import stats
 from sklearn.utils import check_array
 
 TestResult = namedtuple("TestResult", "statistic p_value")
@@ -78,7 +78,7 @@ def mean_vector_hypotest(X, exp_mu, cov=None, alpha=None):
     """
     Tests whether the empirical mean vector of the given data set is equal to
     the expected mean vector `exp_mu`.
-    
+
     Parameters
     ----------
     X : array_like, shape (n, p)
@@ -109,10 +109,14 @@ def mean_vector_hypotest(X, exp_mu, cov=None, alpha=None):
         const = 1
         rv = stats.chi2(df=p)
 
-    statistic = const * n * la.multi_dot([(mean - exp_mu).T, la.inv(cov), mean - exp_mu])
+    statistic = (
+        const * n * la.multi_dot([(mean - exp_mu).T, la.inv(cov), mean - exp_mu])
+    )
     p_value = rv.sf(x=statistic)
     if alpha:
-        print(f"Critical Value for Significance level {1 - alpha:.2%}: {rv.ppf(1 - alpha)}")
+        print(
+            f"Critical Value for Significance level {1 - alpha:.2%}: {rv.ppf(1 - alpha)}"
+        )
     return TestResult(statistic, p_value)
 
 
@@ -143,7 +147,9 @@ def symmetry_hypotest(X, cov=None, alpha=None):
     """
     X = check_array(X, ensure_min_features=2, copy=True)
     Z = X[:, :-1] - X[:, -1].reshape(-1, 1)
-    return mean_vector_hypotest(Z, exp_mu=np.zeros(X.shape[1] - 1), cov=cov, alpha=alpha)
+    return mean_vector_hypotest(
+        Z, exp_mu=np.zeros(X.shape[1] - 1), cov=cov, alpha=alpha
+    )
 
 
 def two_uncorrelated_features_hypotest(x, y):
@@ -214,3 +220,46 @@ def uncorrelated_features_hypotest(X, is_corr_mtx=False, n_samples=-1):
     statistic = -1 * (n - 1 - (2 * p + 5) / 6) * np.log(la.det(R))
     p_value = stats.chi2.sf(df=df, x=statistic)
     return TestResult(statistic, p_value)
+
+
+def specific_correlation_hypotest(x, y, exp_rho):
+    """
+    Tests whether the correlation between x and y is significantly
+    different from the expected correlation exp_rho.
+
+    H0: The correlation is equal to exp_rho.
+    H1: The correlation is not equal to exp_rho.
+
+    Parameters
+    ----------
+    x : array_like, shape (n,)
+        Data of first feature.
+    y : array_like, shape (n,)
+        Data of second feature.
+    exp_rho : float
+        The expected correlation.
+
+    Returns
+    -------
+    statistic : float
+        The value of the test statistic
+    p_value: float
+        The p-value.
+    """
+    x = check_array(x, copy=True, ensure_2d=False)
+    y = check_array(y, copy=True, ensure_2d=False)
+    if len(x) != len(y):
+        raise ValueError("x and y must be of equal length.")
+    n = len(x)
+    r = np.corrcoef(x, y)[0][1]
+    # the transformed value (Fishers Z Transformation) is approximately
+    # normally distributed with variance 1/(n-3). for the mean, see below
+    transformed_r = np.arctanh(r)
+
+    # because E(g(x)) != g(E(x)) (here g is arctanh) the mean of the transformed
+    # estimator is not just equal to arctanh(r)
+    transformed_mu = np.arctanh(exp_rho) + exp_rho / (2 * (n - 1))
+
+    statistic = (transformed_r - transformed_mu) * np.sqrt(n - 3)
+    p_value = 2 * stats.norm.sf(statistic)
+    return statistic, p_value
