@@ -191,6 +191,8 @@ def uncorrelated_features_hypotest(X, is_corr_mtx=False, n_samples=-1):
     H0: for all (i,j) with i != j, rho(X_i, X_j) = 0
     H1: it exists (i,j) with i != j so that rho(X_i, X_j) != 0
 
+    This test requires that X follows a multivariate gaussian.
+
     Parameters
     ----------
     X : array_like, shape (n, p) or shape(p, p) if is_corr_mtx is True
@@ -229,6 +231,8 @@ def specific_correlation_hypotest(x, y, exp_rho):
 
     H0: The correlation is equal to exp_rho.
     H1: The correlation is not equal to exp_rho.
+
+    This test requires that x and y are normally distributed.
 
     Parameters
     ----------
