@@ -170,7 +170,8 @@ def two_uncorrelated_features_hypotest(x, y):
     p_value: float
         The p-value.
     """
-    x, y = check_array(x, y, copy=True, ensure_2d=False)
+    x = check_array(x, copy=True, ensure_2d=False)
+    y = check_array(y, copy=True, ensure_2d=False)
     n = len(x)
     r, _ = stats.pearsonr(x, y)
     statistic = r * np.sqrt(n - 2) / np.sqrt(1 - r ** 2)
@@ -247,7 +248,8 @@ def specific_correlation_hypotest(x, y, exp_rho):
     p_value: float
         The p-value.
     """
-    x, y = check_array(x, y, copy=True, ensure_2d=False)
+    x = check_array(x, copy=True, ensure_2d=False)
+    y = check_array(y, copy=True, ensure_2d=False)
     n = len(x)
     r, _ = stats.pearsonr(x, y)
     # the transformed value (Fishers Z Transformation) is approximately
