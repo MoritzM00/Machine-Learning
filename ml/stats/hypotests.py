@@ -170,12 +170,9 @@ def two_uncorrelated_features_hypotest(x, y):
     p_value: float
         The p-value.
     """
-    x = check_array(x, copy=True, ensure_2d=False)
-    y = check_array(y, copy=True, ensure_2d=False)
-    if len(x) != len(y):
-        raise ValueError("x and y must be of equal length.")
+    x, y = check_array(x, y, copy=True, ensure_2d=False)
     n = len(x)
-    r = np.corrcoef(x, y)[0][1]
+    r, _ = stats.pearsonr(x, y)
     statistic = r * np.sqrt(n - 2) / np.sqrt(1 - r ** 2)
     rv = stats.t(n - 2)
     p_value = min(1 - rv.cdf(statistic), rv.cdf(statistic))
@@ -250,12 +247,9 @@ def specific_correlation_hypotest(x, y, exp_rho):
     p_value: float
         The p-value.
     """
-    x = check_array(x, copy=True, ensure_2d=False)
-    y = check_array(y, copy=True, ensure_2d=False)
-    if len(x) != len(y):
-        raise ValueError("x and y must be of equal length.")
+    x, y = check_array(x, y, copy=True, ensure_2d=False)
     n = len(x)
-    r = np.corrcoef(x, y)[0][1]
+    r, _ = stats.pearsonr(x, y)
     # the transformed value (Fishers Z Transformation) is approximately
     # normally distributed with variance 1/(n-3). for the mean, see below
     transformed_r = np.arctanh(r)
