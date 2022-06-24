@@ -4,6 +4,7 @@
 ![License](https://img.shields.io/github/license/MoritzM00/Machine-Learning?color=blue)
 
 ---
+**Note**: At the moment, I am not able to work on this project due to time constraints.
 
 ## Overview
 This project implements several well known statistical methods used to analyse high-dimensional data.
